@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "yarn": "npm i -g yarn@latest"
   },
   "dependencies": {
     "next": "9.4.0",
