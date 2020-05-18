@@ -1,10 +1,11 @@
 import * as React from "react";
 
 import App from "next/app";
-import Head from "next/head";
 
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron, debug } from "../styletron";
+
+import AppHead from "../components/app/app-head.component";
 
 class MyApp extends App {
   // Only uncomment this method if you have blocking data requirements for
@@ -23,12 +24,7 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
-        <Head>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
-        </Head>
+        <AppHead />
         <Component {...pageProps} />
       </StyletronProvider>
     );
