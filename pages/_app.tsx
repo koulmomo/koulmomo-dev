@@ -2,12 +2,11 @@ import * as React from "react";
 
 import App from "next/app";
 
-import CssBaseline from "@material-ui/core/CssBaseline";
-
 import { Provider as StyletronProvider } from "styletron-react";
 import { styletron, debug } from "../styletron";
 
-import AppHead from "../components/app/app-head.component";
+import AppHead from "../src/components/app/app-head.component";
+import MaterialUITheme from "../src/components/app/material-ui-theme.component";
 
 class MyApp extends App {
   // Only uncomment this method if you have blocking data requirements for
@@ -26,9 +25,10 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
-        <CssBaseline />
         <AppHead />
-        <Component {...pageProps} />
+        <MaterialUITheme>
+          <Component {...pageProps} />
+        </MaterialUITheme>
       </StyletronProvider>
     );
   }

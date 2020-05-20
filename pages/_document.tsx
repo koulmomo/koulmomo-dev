@@ -5,26 +5,45 @@ import { Provider as StyletronProvider } from "styletron-react";
 import { StyletronServer as styletron } from "../styletron";
 import { Sheet } from "styletron-engine-atomic";
 
+import { ServerStyleSheets } from "@material-ui/core/styles";
+
 interface MyDocumentProps extends DocumentProps {
-  stylesheets: Array<Sheet>;
+  styletronSheets: Array<Sheet>;
 }
 
 class MyDocument extends Document<MyDocumentProps> {
-  static getInitialProps(props) {
-    const page = props.renderPage((App) => (props) => (
-      <StyletronProvider value={styletron}>
-        <App {...props} />
-      </StyletronProvider>
-    ));
-    const stylesheets = styletron.getStylesheets() || [];
-    return { ...page, stylesheets };
+  static async getInitialProps(ctx) {
+    // material-ui ssr
+    // @see: https://github.com/mui-org/material-ui/blob/310f629eedd2db6318fe53534519d50cc54ca9e3/examples/nextjs/pages/_document.js
+    const muiSheets = new ServerStyleSheets();
+
+    const page = ctx.renderPage((App) => (props) =>
+      muiSheets.collect(
+        <StyletronProvider value={styletron}>
+          <App {...props} />
+        </StyletronProvider>
+      )
+    );
+
+    const initialProps = await Document.getInitialProps(ctx);
+
+    const styletronSheets = styletron.getStylesheets() || [];
+    return {
+      ...initialProps,
+      ...page,
+      styletronSheets,
+      styles: [
+        ...React.Children.toArray(initialProps.styles),
+        muiSheets.getStyleElement(),
+      ],
+    };
   }
 
   render() {
     return (
       <html>
         <Head>
-          {this.props.stylesheets.map((sheet, i) => (
+          {this.props.styletronSheets.map((sheet, i) => (
             <style
               className="_styletron_hydrate_"
               dangerouslySetInnerHTML={{ __html: sheet.css }}
